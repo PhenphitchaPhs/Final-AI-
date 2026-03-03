@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [topic, setTopic] = useState("");
-  const [tone, setTone] = useState("เป็นทางการ"); // เพิ่ม State สำหรับโทนเสียง
+  const [tone, setTone] = useState("เป็นทางการ");
   const [objective, setObjective] = useState("ให้ความรู้");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -15,15 +15,17 @@ export default function Home() {
     setResult(null);
 
     try {
-      
-      const webhookUrl = "https://phenphitcha4848.app.n8n.cloud/webhook/00836624-8dda-4f1b-9ee0-65919576504a";
+      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
+
+      if (!webhookUrl) {
+        throw new Error("ยังไม่ได้ตั้งค่า Webhook URL ในไฟล์ .env");
+      }
 
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        
         body: JSON.stringify({
           "หัวข้อที่ต้องการเขียน": topic,
           "โทนเสียงของเนื้อหา": tone, 
